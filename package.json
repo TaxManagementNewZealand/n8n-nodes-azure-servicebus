@@ -1,6 +1,6 @@
 {
   "name": "@taxmanagementnz/n8n-nodes-azure-servicebus",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Azure Service Bus nodes for n8n with full session support using official @azure/service-bus based on pokash community node",
   "keywords": [
     "n8n-community-node-package"
