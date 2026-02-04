@@ -4,6 +4,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AzureServiceBus = void 0;
+function isEmptyMessageBody(messageBody) {
+    if (messageBody === null || messageBody === undefined) {
+        return true;
+    }
+    if (typeof messageBody === 'string') {
+        return messageBody.trim() === '';
+    }
+    if (typeof messageBody === 'number' || typeof messageBody === 'boolean') {
+        return false;
+    }
+    if (typeof messageBody === 'object') {
+        return false;
+    }
+    return true;
+}
 async function sendMessageViaHTTP(connectionDetails, queueName, message) {
     console.log('🌍 Starting HTTP REST API approach...');
     const namespace = connectionDetails.hostname.split('.')[0];
@@ -233,7 +248,7 @@ class AzureServiceBus {
                 {
                     displayName: 'Message Body',
                     name: 'messageBody',
-                    type: 'string',
+                    type: 'json',
                     typeOptions: {
                         rows: 4,
                     },
@@ -243,7 +258,7 @@ class AzureServiceBus {
                         },
                     },
                     default: '',
-                    description: 'The message body to send',
+                    description: 'The message body to send. Can be a string, number, boolean, or JSON object/array.',
                 },
                 {
                     displayName: 'Session ID',
@@ -518,19 +533,20 @@ class AzureServiceBus {
                     }
                     for (let i = 0; i < items.length; i++) {
                         console.log(`📝 Processing message ${i + 1}/${items.length}`);
-                        const messageBody = this.getNodeParameter('messageBody', i, '');
+                        const messageBody = this.getNodeParameter('messageBody', i);
                         const messageProperties = this.getNodeParameter('messageProperties', i, {});
                         const contentType = this.getNodeParameter('contentType', i, 'application/json');
                         const messageId = this.getNodeParameter('messageId', i, '');
                         const sessionId = this.getNodeParameter('sessionId', i, '');
                         console.log(`📝 Message details:`, {
-                            bodyLength: messageBody.length,
+                            bodyType: typeof messageBody,
+                            bodyLength: typeof messageBody === 'string' ? messageBody.length : 'N/A',
                             contentType,
                             hasMessageId: !!messageId,
                             hasSessionId: !!sessionId,
                             hasProperties: !!(messageProperties === null || messageProperties === void 0 ? void 0 : messageProperties.property)
                         });
-                        if (!messageBody || messageBody.trim() === '') {
+                        if (isEmptyMessageBody(messageBody)) {
                             console.error('❌ Message body is empty!');
                             throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Message Body cannot be empty');
                         }
@@ -725,12 +741,12 @@ class AzureServiceBus {
                     }
                     const sender = serviceBusClient.createSender(topicName);
                     for (let i = 0; i < items.length; i++) {
-                        const messageBody = this.getNodeParameter('messageBody', i, '');
+                        const messageBody = this.getNodeParameter('messageBody', i);
                         const messageProperties = this.getNodeParameter('messageProperties', i, {});
                         const contentType = this.getNodeParameter('contentType', i, 'application/json');
                         const messageId = this.getNodeParameter('messageId', i, '');
                         const sessionId = this.getNodeParameter('sessionId', i, '');
-                        if (!messageBody || messageBody.trim() === '') {
+                        if (isEmptyMessageBody(messageBody)) {
                             throw new n8n_workflow_1.NodeOperationError(this.getNode(), 'Message Body cannot be empty');
                         }
                         const message = {
