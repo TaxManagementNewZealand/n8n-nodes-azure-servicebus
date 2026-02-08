@@ -36,5 +36,4 @@ Endpoint=sb://xxx.servicebus.windows.net/;SharedAccessKeyName=xxx;SharedAccessKe
 }
 ```
 
----
-*Original author: [@pokash/n8n-nodes-azure-servicebus](https://github.com/pokash/n8n-nodes-azure-servicebus)*
+

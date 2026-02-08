@@ -23,7 +23,6 @@ class AzureServiceBusApi {
             type: 'generic',
             properties: {},
         };
-        console.log('🔧 AzureServiceBusApi credentials constructor called');
     }
 }
 exports.AzureServiceBusApi = AzureServiceBusApi;
