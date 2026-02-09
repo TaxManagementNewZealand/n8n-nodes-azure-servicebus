@@ -3,7 +3,6 @@ export declare class AzureServiceBusApi implements ICredentialType {
     name: string;
     displayName: string;
     documentationUrl: string;
-    constructor();
     properties: INodeProperties[];
     authenticate: IAuthenticateGeneric;
 }
